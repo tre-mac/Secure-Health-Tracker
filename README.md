@@ -27,3 +27,17 @@ AWS Infrastructure
 - Amazon EC2
 - Amazon RDS MySQL
 - Amazon S3
+
+Service	Purpose
+Amazon VPC -->	Isolated network environment
+Public Subnet	Hosts internet-facing resources
+Private Application Subnet	Hosts backend EC2 instance
+Private Database Subnet	Hosts RDS database
+Internet Gateway	Allows public internet access
+NAT Gateway	Enables outbound internet access for private resources
+Application Load Balancer	Routes traffic to backend services
+Amazon EC2	Hosts backend API
+Amazon RDS MySQL	Stores health tracking data
+Amazon S3	Hosts static frontend website
+IAM	Access and permission management
+Security Groups	Network-level access control
