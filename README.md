@@ -11,3 +11,5 @@ Project Goals
 - Protect application and database resources from direct public access
 - Store and retrieve health tracking data securely
 - Demonstrate cloud architecture, infrastructure, and security concepts
+
+<img width="822" height="615" alt="Screenshot 2026-06-11 at 5 05 25 PM" src="https://github.com/user-attachments/assets/9eaf8101-62c0-4cb8-bae5-736df1277eb1" />
