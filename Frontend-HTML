@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Secure Health Tracker</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    input {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 300px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+
+    .entry {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Secure Health Tracker</h1>
+
+<h2>Add Daily Entry</h2>
+
+<input id="systolic" type="number" placeholder="Systolic BP">
+<input id="diastolic" type="number" placeholder="Diastolic BP">
+<input id="sodium" type="number" placeholder="Sodium Intake (mg)">
+<input id="notes" type="text" placeholder="Notes optional">
+
+<button onclick="saveEntry()">Save Entry</button>
+
+<p id="message"></p>
+
+<h2>Previous Entries</h2>
+
+<button onclick="loadEntries()">Load Entries</button>
+
+<div id="entries"></div>
+
+<script>
+const API_URL = "http://health-tracker-alb-1247912349.us-east-1.elb.amazonaws.com";
+
+function showMessage(text, isError = false) {
+  const message = document.getElementById("message");
+  message.textContent = text;
+  message.className = isError ? "error" : "";
+}
+
+function validateEntry(systolic, diastolic, sodium) {
+  if (!systolic || !diastolic) {
+    return "Systolic and diastolic blood pressure are required.";
+  }
+
+  if (systolic < 70 || systolic > 250) {
+    return "Systolic blood pressure must be between 70 and 250.";
+  }
+
+  if (diastolic < 40 || diastolic > 150) {
+    return "Diastolic blood pressure must be between 40 and 150.";
+  }
+
+  if (Number(diastolic) >= Number(systolic)) {
+    return "Diastolic pressure should be lower than systolic pressure.";
+  }
+
+  if (sodium && sodium < 0) {
+    return "Sodium intake cannot be negative.";
+  }
+
+  return null;
+}
+
+async function saveEntry() {
+  const systolic = Number(document.getElementById("systolic").value);
+  const diastolic = Number(document.getElementById("diastolic").value);
+  const sodiumValue = document.getElementById("sodium").value;
+  const sodium = sodiumValue ? Number(sodiumValue) : null;
+  const notes = document.getElementById("notes").value;
+
+  const validationError = validateEntry(systolic, diastolic, sodium);
+
+  if (validationError) {
+    showMessage(validationError, true);
+    return;
+  }
+
+  const data = {
+    systolic,
+    diastolic,
+    sodium,
+    notes
+  };
+
+  try {
+    const response = await fetch(`${API_URL}/entry`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error("Server returned an error.");
+    }
+
+    const result = await response.json();
+
+    showMessage(result.message || "Entry saved successfully.");
+
+    document.getElementById("systolic").value = "";
+    document.getElementById("diastolic").value = "";
+    document.getElementById("sodium").value = "";
+    document.getElementById("notes").value = "";
+
+  } catch (error) {
+    console.error(error);
+    showMessage("Error saving entry. Check that your backend is running.", true);
+  }
+}
+
+async function loadEntries() {
+  try {
+    const response = await fetch(`${API_URL}/entries`);
+
+    if (!response.ok) {
+      throw new Error("Server returned an error.");
+    }
+
+    const entries = await response.json();
+    const container = document.getElementById("entries");
+
+    if (entries.length === 0) {
+      container.innerHTML = "<p>No entries found.</p>";
+      return;
+    }
+
+    container.innerHTML = entries.map(entry => `
+      <div class="entry">
+        <strong>Blood Pressure:</strong> ${entry.systolic}/${entry.diastolic}<br>
+        <strong>Sodium:</strong> ${entry.sodium ?? "Not entered"} mg<br>
+        <strong>Notes:</strong> ${entry.notes || "No notes"}<br>
+        <strong>Date:</strong> ${entry.created_at}
+      </div>
+    `).join("");
+
+  } catch (error) {
+    console.error(error);
+    showMessage("Error loading entries. Check that your backend is running.", true);
+  }
+}
+</script>
+
+</body>
+</html>
