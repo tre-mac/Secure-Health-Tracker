@@ -36,11 +36,45 @@ Public Subnet -->	Hosts internet-facing resources
 Private Application Subnet -->	Hosts backend EC2 instance
 
 Private Database Subnet	--> Hosts RDS database
-Internet Gateway	Allows public internet access
-NAT Gateway	Enables outbound internet access for private resources
-Application Load Balancer	Routes traffic to backend services
-Amazon EC2	Hosts backend API
-Amazon RDS MySQL	Stores health tracking data
-Amazon S3	Hosts static frontend website
-IAM	Access and permission management
-Security Groups	Network-level access control
+
+Internet Gateway -->	Allows public internet access
+
+NAT Gateway -->	Enables outbound internet access for private resources
+
+Application Load Balancer -->	Routes traffic to backend services
+Amazon EC2	--> Hosts backend API
+Amazon RDS MySQL -->	Stores health tracking data
+Amazon S3	--> Hosts static frontend website
+IAM	--> Access and permission management
+Security Groups -->	Network-level access control
+____________________________________________________________________
+
+# Security Features
+
+Network Security
+- VPC network isolation
+- Public and private subnet segmentation
+- Internet Gateway for controlled public access
+- NAT Gateway for secure outbound traffic
+- Application Load Balancer in a public subnet
+- Backend EC2 instance isolated in a private subnet
+- Database isolated in a private database subnet
+
+Access Control
+- IAM roles and policies
+- Security Groups configured using least-privilege principles
+- Database access restricted to the backend server only
+- Backend access restricted to the Application Load Balancer
+
+Database Security
+- Private RDS deployment
+- No direct public database access
+- Controlled database connectivity through EC2 backend services
+
+____________________________________________________________________
+
+# Lessons Learned
+
+During this project, I gained hands-on experience designing and deploying a secure AWS infrastructure. I learned how to implement network segmentation using public and private subnets, configure Application Load Balancers, deploy backend services on EC2, and secure databases using private RDS deployments.
+
+This project reinforced the importance of cloud security principles, including least-privilege access, resource isolation, and secure network design.
