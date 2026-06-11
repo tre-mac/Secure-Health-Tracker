@@ -30,9 +30,12 @@ AWS Infrastructure
 
 Service	Purpose
 Amazon VPC -->	Isolated network environment
-Public Subnet	Hosts internet-facing resources
-Private Application Subnet	Hosts backend EC2 instance
-Private Database Subnet	Hosts RDS database
+
+Public Subnet -->	Hosts internet-facing resources
+
+Private Application Subnet -->	Hosts backend EC2 instance
+
+Private Database Subnet	--> Hosts RDS database
 Internet Gateway	Allows public internet access
 NAT Gateway	Enables outbound internet access for private resources
 Application Load Balancer	Routes traffic to backend services
